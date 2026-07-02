@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { getUsers, deleteUser } from "../services/userService";
 import UserTable from "../components/UserTable/UserTable";
 import Navbar from "../components/Navbar/Navbar";
-import SearchBar from "../components/SearchBar/SearchBar";
+//import SearchBar from "../components/SearchBar/SearchBar";
+import Toolbar from "../components/Toolbar/Toolbar";
 
 function Dashboard() {
 const [users, setUsers] = useState([]);
@@ -47,7 +48,7 @@ const filteredUsers = users.filter((user) => {
       <Navbar />
 
       <div className="dashboard-container">
-        <SearchBar
+        <Toolbar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
         />
