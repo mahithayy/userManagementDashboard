@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getUsers } from "../services/userService";
 import UserTable from "../components/UserTable/UserTable";
+import Navbar from "../components/Navbar/Navbar";
+import SearchBar from "../components/SearchBar/SearchBar";
 function Dashboard() {
   const [users, setUsers] = useState([]);
 const fetchUsers = async () => {
@@ -12,19 +14,24 @@ const fetchUsers = async () => {
       console.error("Failed to fetch users:", error);
     }
   };
-  useEffect(() => {
+useEffect(() => {
     fetchUsers();
   }, []);
 
 
 
   return (
-    <div>
-      <h1>User Management Dashboard</h1>
+    <>
+    <Navbar />
+
+    <div className="dashboard-container">
+      <SearchBar />
 
       <p>Total Users: {users.length}</p>
+
       <UserTable users={users} />
     </div>
+  </>
   );
 }
 

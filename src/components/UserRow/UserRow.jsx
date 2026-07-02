@@ -1,5 +1,6 @@
 function UserRow({ user }) {
-  const nameParts = user.name.split(" ");
+  const fullName = user.name || "";
+  const nameParts = fullName.split(" ");
 
   const firstName = nameParts[0];
 

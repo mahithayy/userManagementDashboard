@@ -12,3 +12,13 @@ body {
 button {
   cursor: pointer;
 }
+.dashboard-container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+input {
+  padding: 10px;
+  width: 300px;
+}
