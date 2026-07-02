@@ -4,7 +4,7 @@ import UserTable from "../components/UserTable/UserTable";
 import Navbar from "../components/Navbar/Navbar";
 //import SearchBar from "../components/SearchBar/SearchBar";
 import Toolbar from "../components/Toolbar/Toolbar";
-
+import UserForm from "../components/UserForm/UserForm";
 function Dashboard() {
 const [users, setUsers] = useState([]);
 const [searchTerm, setSearchTerm] = useState("");
@@ -58,6 +58,7 @@ const filteredUsers = users.filter((user) => {
         </p>
 
         <UserTable users={filteredUsers} onDelete={handleDeleteUser} />
+        <UserForm />
       </div>
   </>
   );
