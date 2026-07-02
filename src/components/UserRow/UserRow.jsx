@@ -1,4 +1,4 @@
-function UserRow({ user }) {
+function UserRow({ user, onDelete }) {
   const fullName = user.name || "";
   const nameParts = fullName.split(" ");
 
@@ -21,7 +21,19 @@ function UserRow({ user }) {
       <td>
         <button>Edit</button>
 
-        <button>Delete</button>
+        <button
+          onClick={() => {
+            const confirmed = window.confirm(
+              `Delete ${firstName} ${lastName}?`
+        );
+
+        if (confirmed) {
+          onDelete(user.id);
+        }
+      }}
+    >
+      Delete
+    </button>
       </td>
     </tr>
   );

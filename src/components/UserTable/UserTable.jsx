@@ -1,7 +1,7 @@
 import UserRow from "../UserRow/UserRow";
 import "./UserTable.css";
 
-function UserTable({ users }) {
+function UserTable({ users, onDelete}) {
   return (
     <table className="user-table">
       <thead>
@@ -20,6 +20,7 @@ function UserTable({ users }) {
           <UserRow
             key={user.id}
             user={user}
+            onDelete={onDelete}
           />
         ))}
       </tbody>
