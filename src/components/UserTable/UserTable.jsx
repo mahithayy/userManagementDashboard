@@ -1,7 +1,7 @@
 import UserRow from "../UserRow/UserRow";
 import "./UserTable.css";
 
-function UserTable({ users, onDelete}) {
+function UserTable({ users, onDelete, onEdit }) {
   return (
     <table className="user-table">
       <thead>
@@ -21,6 +21,7 @@ function UserTable({ users, onDelete}) {
             key={user.id}
             user={user}
             onDelete={onDelete}
+            onEdit={onEdit}
           />
         ))}
       </tbody>

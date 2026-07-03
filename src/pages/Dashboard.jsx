@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers, deleteUser, addUser } from "../services/userService";
+import { getUsers, deleteUser, addUser, updateUser } from "../services/userService";
 import UserTable from "../components/UserTable/UserTable";
 import Navbar from "../components/Navbar/Navbar";
 import Toolbar from "../components/Toolbar/Toolbar";
@@ -10,12 +10,13 @@ function Dashboard() {
 const [users, setUsers] = useState([]);
 const [searchTerm, setSearchTerm] = useState("");
 const [showUserForm, setShowUserForm] = useState(false);
+const [editingUser, setEditingUser] = useState(null);
 
 const fetchUsers = async () => {
     try {
-      const data = await getUsers();
+      const apiUsers = await getUsers();
       //console.log(data);
-      const normalizedUsers = data.map(normalizeUser);
+      const normalizedUsers = apiUsers.map(normalizeUser);
 
      setUsers(normalizedUsers);
     } catch (error) {
@@ -59,6 +60,30 @@ const handleAddUser = async (newUser) => {
   }
 };
 
+const handleUpdateUser = async (updatedUser) => {
+  try {
+    await updateUser(updatedUser.id, updatedUser);
+
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === updatedUser.id
+          ? updatedUser
+          : user
+      )
+    );
+
+    setEditingUser(null);
+    setShowUserForm(false);
+  } catch (error) {
+    console.error("Failed to update user:", error);
+  }
+};
+
+const handleEditClick = (user) => {
+  setEditingUser(user);
+  setShowUserForm(true);
+};
+
 useEffect(() => {
     fetchUsers();
   }, []);
@@ -93,14 +118,23 @@ const filteredUsers = users.filter((user) => {
 
         {showUserForm && (
           <UserForm
-            onCancel={() => setShowUserForm(false)}
-            onSubmit={handleAddUser}
+            initialData={editingUser}
+            onCancel={() => {
+              setEditingUser(null);
+              setShowUserForm(false);
+            }}
+            onSubmit={
+              editingUser
+                ? handleUpdateUser
+                : handleAddUser
+            }
           />
         )}
 
         <UserTable
           users={filteredUsers}
           onDelete={handleDeleteUser}
+          onEdit={handleEditClick}
         />
       </div>
   </>

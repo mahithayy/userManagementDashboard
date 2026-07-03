@@ -41,7 +41,10 @@ const handleSubmit = (event) => {
 
   setErrors({});
 
-  onSubmit(formData);
+  onSubmit({
+  ...formData,
+  id: initialData?.id,
+});
 
   setFormData({
   firstName: "",

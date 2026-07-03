@@ -1,4 +1,4 @@
-function UserRow({ user, onDelete }) {
+function UserRow({ user, onDelete, onEdit }) {
   const { firstName, lastName, email, department } = user;
 
   return (
@@ -14,7 +14,7 @@ function UserRow({ user, onDelete }) {
       <td>{department || "-"}</td>
 
       <td>
-        <button>Edit</button>
+        <button onClick={() => onEdit(user)}>Edit</button>
 
         <button
           onClick={() => {
