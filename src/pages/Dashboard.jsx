@@ -5,14 +5,18 @@ import Navbar from "../components/Navbar/Navbar";
 //import SearchBar from "../components/SearchBar/SearchBar";
 import Toolbar from "../components/Toolbar/Toolbar";
 import UserForm from "../components/UserForm/UserForm";
+import { normalizeUser } from "../utils/helpers";
 function Dashboard() {
 const [users, setUsers] = useState([]);
 const [searchTerm, setSearchTerm] = useState("");
+const [showUserForm, setShowUserForm] = useState(false);
 const fetchUsers = async () => {
     try {
       const data = await getUsers();
-      console.log(data);
-      setUsers(data);
+      //console.log(data);
+      const normalizedUsers = data.map(normalizeUser);
+
+     setUsers(normalizedUsers);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
@@ -31,14 +35,16 @@ const handleDeleteUser = async (id) => {
 useEffect(() => {
     fetchUsers();
   }, []);
+const searchValue = searchTerm.toLowerCase();
 
 const filteredUsers = users.filter((user) => {
-  const fullName = user.name?.toLowerCase() || "";
+  const fullName =
+  `${user.firstName} ${user.lastName}`.toLowerCase();
   const email = user.email?.toLowerCase() || "";
 
   return (
-    fullName.includes(searchTerm.toLowerCase()) ||
-    email.includes(searchTerm.toLowerCase())
+    fullName.includes(searchValue) ||
+    email.includes(searchValue)
   );
 });
 
@@ -51,14 +57,23 @@ const filteredUsers = users.filter((user) => {
         <Toolbar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
+          onAddUser={() => setShowUserForm(true)}
         />
 
         <p>
           Showing {filteredUsers.length} of {users.length} users
         </p>
 
-        <UserTable users={filteredUsers} onDelete={handleDeleteUser} />
-        <UserForm />
+        {showUserForm && (
+          <UserForm
+            onCancel={() => setShowUserForm(false)}
+          />
+        )}
+
+        <UserTable
+          users={filteredUsers}
+          onDelete={handleDeleteUser}
+        />
       </div>
   </>
   );

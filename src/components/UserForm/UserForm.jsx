@@ -1,6 +1,6 @@
 import "./UserForm.css";
 
-function UserForm() {
+function UserForm({onCancel}) {
   return (
     <form className="user-form">
       <h2>Add User</h2>
@@ -27,6 +27,13 @@ function UserForm() {
 
       <button type="submit">
         Save User
+      </button>
+
+      <button
+        type="button"
+        onClick={onCancel}
+      >
+        Cancel
       </button>
     </form>
   );

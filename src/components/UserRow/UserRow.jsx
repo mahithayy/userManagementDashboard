@@ -1,10 +1,5 @@
 function UserRow({ user, onDelete }) {
-  const fullName = user.name || "";
-  const nameParts = fullName.split(" ");
-
-  const firstName = nameParts[0];
-
-  const lastName = nameParts.slice(1).join(" ");
+  const { firstName, lastName, email, department } = user;
 
   return (
     <tr>
@@ -14,9 +9,9 @@ function UserRow({ user, onDelete }) {
 
       <td>{lastName}</td>
 
-      <td>{user.email}</td>
+      <td>{email}</td>
 
-      <td>-</td>
+      <td>{department || "-"}</td>
 
       <td>
         <button>Edit</button>

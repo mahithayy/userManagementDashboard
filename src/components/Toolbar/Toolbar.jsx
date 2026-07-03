@@ -4,6 +4,7 @@ import SearchBar from "../SearchBar/SearchBar";
 function Toolbar({
   searchTerm,
   onSearchChange,
+  onAddUser,
 }) {
   return (
     <div className="toolbar">
@@ -18,7 +19,9 @@ function Toolbar({
 
       <button>Filters</button>
 
-      <button>Add User</button>
+      <button onClick={onAddUser}>
+        Add User
+      </button>
     </div>
   );
 }
