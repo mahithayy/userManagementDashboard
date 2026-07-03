@@ -4,6 +4,7 @@ import UserTable from "../components/UserTable/UserTable";
 import Navbar from "../components/Navbar/Navbar";
 import Toolbar from "../components/Toolbar/Toolbar";
 import UserForm from "../components/UserForm/UserForm";
+import FilterModal from "../components/FilterModal/FilterModal";
 import { normalizeUser } from "../utils/helpers";
 
 function Dashboard() {
@@ -13,6 +14,11 @@ const [showUserForm, setShowUserForm] = useState(false);
 const [editingUser, setEditingUser] = useState(null);
 const [currentPage, setCurrentPage] = useState(1);
 const [usersPerPage, setUsersPerPage] = useState(10);
+
+const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
+const [showFilters, setShowFilters] = useState(false);
+const [filters, setFilters] = useState({ firstName: '', lastName: '', email: '', department: '' });
+
 const fetchUsers = async () => {
     try {
       const apiUsers = await getUsers();
@@ -90,34 +96,60 @@ const handleEditClick = (user) => {
 useEffect(() => {
     fetchUsers();
   }, []);
+
+ const handleSortChange = (value) => {
+    const [key, direction] = value.split('-');
+    setSortConfig({ key, direction });
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    setShowFilters(false);
+    setCurrentPage(1); // Reset page on filter
+  };
 const searchValue = searchTerm.toLowerCase();
 
-const filteredUsers = users.filter((user) => {
-  const fullName =
-  `${user.firstName} ${user.lastName}`.toLowerCase();
-  const email = user.email?.toLowerCase() || "";
+let processedUsers = users.filter((user) => {
+    // 1. General Search
+    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+    const email = user.email?.toLowerCase() || "";
+    const matchesSearch = fullName.includes(searchValue) || email.includes(searchValue);
 
-  return (
-    fullName.includes(searchValue) ||
-    email.includes(searchValue)
-  );
-});
+    // 2. Advanced Filters
+    const matchesFirst = user.firstName.toLowerCase().includes(filters.firstName.toLowerCase());
+    const matchesLast = user.lastName.toLowerCase().includes(filters.lastName.toLowerCase());
+    const matchesEmail = email.includes(filters.email.toLowerCase());
+    const matchesDept = (user.department || "").toLowerCase().includes(filters.department.toLowerCase());
 
- const indexOfLastUser = currentPage * usersPerPage;
-const indexOfFirstUser = indexOfLastUser - usersPerPage;
-const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+    return matchesSearch && matchesFirst && matchesLast && matchesEmail && matchesDept;
+  });
 
-const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  // 3. Sorting
+  processedUsers.sort((a, b) => {
+    let valA = a[sortConfig.key] || "";
+    let valB = b[sortConfig.key] || "";
 
-const handlePageChange = (newPage) => {
-  setCurrentPage(newPage);
-};
+    if (typeof valA === 'string') valA = valA.toLowerCase();
+    if (typeof valB === 'string') valB = valB.toLowerCase();
 
-const handleLimitChange = (event) => {
-  setUsersPerPage(Number(event.target.value));
-  setCurrentPage(1); // Reset to first page when limit changes
-};
+    if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
 
+const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = processedUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(processedUsers.length / usersPerPage);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleLimitChange = (event) => {
+    setUsersPerPage(Number(event.target.value));
+    setCurrentPage(1);
+  };
 
   return (
     <>
@@ -131,11 +163,19 @@ const handleLimitChange = (event) => {
             setCurrentPage(1); // Reset to first page on new search
           }}
           onAddUser={() => setShowUserForm(true)}
+          onSortChange={handleSortChange}
+          onToggleFilters={() => setShowFilters(true)}
         />
 
-        <p>
-          Showing {filteredUsers.length} of {users.length} users
-        </p>
+        {showFilters && (
+          <FilterModal
+            currentFilters={filters}
+            onApply={handleApplyFilters}
+            onClose={() => setShowFilters(false)}
+          />
+        )}
+
+        <p>Showing {processedUsers.length} of {users.length} users</p>
 
         {showUserForm && (
           <UserForm
