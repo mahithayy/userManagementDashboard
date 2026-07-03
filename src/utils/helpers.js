@@ -6,6 +6,6 @@ export function normalizeUser(user) {
     firstName: nameParts[0] || "",
     lastName: nameParts.slice(1).join(" "),
     email: user.email || "",
-    department: "",
+    department: user.company?.name || "",
   };
 }
