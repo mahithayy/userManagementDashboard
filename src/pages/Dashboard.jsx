@@ -11,7 +11,8 @@ const [users, setUsers] = useState([]);
 const [searchTerm, setSearchTerm] = useState("");
 const [showUserForm, setShowUserForm] = useState(false);
 const [editingUser, setEditingUser] = useState(null);
-
+const [currentPage, setCurrentPage] = useState(1);
+const [usersPerPage, setUsersPerPage] = useState(10);
 const fetchUsers = async () => {
     try {
       const apiUsers = await getUsers();
@@ -23,6 +24,8 @@ const fetchUsers = async () => {
       console.error("Failed to fetch users:", error);
     }
   };
+
+
 const handleDeleteUser = async (id) => {
   try {
     await deleteUser(id);
@@ -100,6 +103,21 @@ const filteredUsers = users.filter((user) => {
   );
 });
 
+ const indexOfLastUser = currentPage * usersPerPage;
+const indexOfFirstUser = indexOfLastUser - usersPerPage;
+const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+const handlePageChange = (newPage) => {
+  setCurrentPage(newPage);
+};
+
+const handleLimitChange = (event) => {
+  setUsersPerPage(Number(event.target.value));
+  setCurrentPage(1); // Reset to first page when limit changes
+};
+
 
   return (
     <>
@@ -108,7 +126,10 @@ const filteredUsers = users.filter((user) => {
       <div className="dashboard-container">
         <Toolbar
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+         onSearchChange={(term) => {
+            setSearchTerm(term);
+            setCurrentPage(1); // Reset to first page on new search
+          }}
           onAddUser={() => setShowUserForm(true)}
         />
 
@@ -132,10 +153,39 @@ const filteredUsers = users.filter((user) => {
         )}
 
         <UserTable
-          users={filteredUsers}
+          users={currentUsers}
           onDelete={handleDeleteUser}
           onEdit={handleEditClick}
         />
+        <div className="pagination-controls" style={{ display: 'flex', gap: '15px', marginTop: '20px', alignItems: 'center' }}>
+          <div>
+            <label>Users per page: </label>
+            <select value={usersPerPage} onChange={handleLimitChange}>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+
+          <div>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </button>
+            <span style={{ margin: '0 10px' }}>
+              Page {currentPage} of {totalPages === 0 ? 1 : totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
   </>
   );

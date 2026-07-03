@@ -31,8 +31,9 @@ const handleChange = (event) => {
 
 const handleSubmit = (event) => {
   event.preventDefault();
+const isEditing = !!initialData;
+const validationErrors = validateUser(formData, isEditing);
 
-  const validationErrors = validateUser(formData);
 
   if (Object.keys(validationErrors).length > 0) {
     setErrors(validationErrors);

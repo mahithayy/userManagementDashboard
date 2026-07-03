@@ -1,4 +1,4 @@
-export function validateUser(user) {
+export function validateUser(user, isEditing = false) {
   const errors = {};
 
   if (!user.firstName.trim()) {
@@ -19,7 +19,7 @@ export function validateUser(user) {
     }
   }
 
-  if (!user.department.trim()) {
+ if (!isEditing && (!user.department || !user.department.trim())) {
     errors.department = "Department is required.";
   }
 
