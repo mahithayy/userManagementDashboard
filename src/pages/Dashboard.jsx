@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { getUsers, deleteUser } from "../services/userService";
+import { getUsers, deleteUser, addUser } from "../services/userService";
 import UserTable from "../components/UserTable/UserTable";
 import Navbar from "../components/Navbar/Navbar";
-//import SearchBar from "../components/SearchBar/SearchBar";
 import Toolbar from "../components/Toolbar/Toolbar";
 import UserForm from "../components/UserForm/UserForm";
 import { normalizeUser } from "../utils/helpers";
+
 function Dashboard() {
 const [users, setUsers] = useState([]);
 const [searchTerm, setSearchTerm] = useState("");
 const [showUserForm, setShowUserForm] = useState(false);
+
 const fetchUsers = async () => {
     try {
       const data = await getUsers();
@@ -32,6 +33,32 @@ const handleDeleteUser = async (id) => {
     console.error("Failed to delete user:", error);
   }
 };
+
+const handleAddUser = async (newUser) => {
+  try {
+    await addUser(newUser);
+
+    const nextId =
+      users.length > 0
+        ? Math.max(...users.map(user => user.id)) + 1
+        : 1;
+    const userToAdd = {
+      ...newUser,
+      id:
+        nextId,
+    };
+
+    setUsers((prevUsers) => [
+      ...prevUsers,
+      userToAdd,
+    ]);
+
+    setShowUserForm(false);
+  } catch (error) {
+    console.error("Failed to add user:", error);
+  }
+};
+
 useEffect(() => {
     fetchUsers();
   }, []);
@@ -67,6 +94,7 @@ const filteredUsers = users.filter((user) => {
         {showUserForm && (
           <UserForm
             onCancel={() => setShowUserForm(false)}
+            onSubmit={handleAddUser}
           />
         )}
 

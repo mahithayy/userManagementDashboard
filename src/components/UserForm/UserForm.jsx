@@ -2,14 +2,17 @@ import { useState } from "react";
 import "./UserForm.css";
 import { validateUser } from "../../utils/validators";
 
-function UserForm({onCancel}) {
-  const [formData, setFormData] = useState({
-  firstName: "",
-  lastName: "",
-  email: "",
-  department: "",
-});
+function UserForm({onCancel, onSubmit, initialData,}) {
+  const emptyUser = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      department: "",
+    };
 
+const [formData, setFormData] = useState(
+  initialData || emptyUser
+);
 const [errors, setErrors] = useState({});
 
 const handleChange = (event) => {
@@ -18,6 +21,11 @@ const handleChange = (event) => {
   setFormData((prev) => ({
     ...prev,
     [name]: value,
+  }));
+
+  setErrors((prev) => ({
+    ...prev,
+    [name]: "",
   }));
 };
 
@@ -33,12 +41,21 @@ const handleSubmit = (event) => {
 
   setErrors({});
 
-  console.log(formData);
+  onSubmit(formData);
+
+  setFormData({
+  firstName: "",
+  lastName: "",
+  email: "",
+  department: "",
+});
 };
 
   return (
-    <form className="user-form" onSubmit={handleSubmit}>
-      <h2>Add User</h2>
+    <form className="user-form" onSubmit={handleSubmit} noValidate>
+      <h2>
+        {initialData ? "Edit User" : "Add User"}
+      </h2>
 
       <input
         type="text"
@@ -96,7 +113,7 @@ const handleSubmit = (event) => {
       <button
         type="submit"
       >
-        Save User
+        {initialData ? "Update User" : "Save User"}
      </button>
 
       <button
