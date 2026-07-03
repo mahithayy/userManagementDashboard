@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./UserForm.css";
-
+import { validateUser } from "../../utils/validators";
 
 function UserForm({onCancel}) {
   const [formData, setFormData] = useState({
@@ -9,6 +9,8 @@ function UserForm({onCancel}) {
   email: "",
   department: "",
 });
+
+const [errors, setErrors] = useState({});
 
 const handleChange = (event) => {
   const { name, value } = event.target;
@@ -19,8 +21,23 @@ const handleChange = (event) => {
   }));
 };
 
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const validationErrors = validateUser(formData);
+
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+
+  setErrors({});
+
+  console.log(formData);
+};
+
   return (
-    <form className="user-form">
+    <form className="user-form" onSubmit={handleSubmit}>
       <h2>Add User</h2>
 
       <input
@@ -31,6 +48,12 @@ const handleChange = (event) => {
         onChange={handleChange}
       />
 
+       {errors.firstName && (
+          <p className="error">
+            {errors.firstName}
+          </p>
+        )}
+
       <input
         type="text"
         placeholder="Last Name"
@@ -38,6 +61,11 @@ const handleChange = (event) => {
         value={formData.lastName}
         onChange={handleChange}
       />
+      {errors.lastName && (
+          <p className="error">
+            {errors.lastName}
+          </p>
+        )}
 
       <input
         type="email"
@@ -46,6 +74,11 @@ const handleChange = (event) => {
         value={formData.email}
         onChange={handleChange}
       />
+      {errors.email && (
+          <p className="error">
+            {errors.email}
+          </p>
+        )}
 
       <input
         type="text"
@@ -54,17 +87,18 @@ const handleChange = (event) => {
         value={formData.department}
         onChange={handleChange}
       />
+      {errors.department && (
+          <p className="error">
+            {errors.department}
+          </p>
+        )}
 
       <button
         type="submit"
-        onClick={(e) => {
-            e.preventDefault();
-
-            console.log(formData);
-          }}
-     >
+      >
         Save User
      </button>
+
       <button
         type="button"
         onClick={onCancel}
