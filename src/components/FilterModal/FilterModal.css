@@ -1,7 +1,10 @@
 .filter-modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,16 +13,75 @@
 
 .filter-modal {
   background: white;
-  padding: 20px;
+  padding: 24px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 300px;
+  gap: 16px;
+  width: 90%;
+  max-width: 350px; /* Allows it to shrink on small screens but caps the width */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Adds depth */
+}
+
+.filter-modal h3 {
+  margin: 0 0 4px 0;
+  color: #333;
+}
+
+/* Override the global input width to fit perfectly inside the modal */
+.filter-modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Ensures padding doesn't add to the total width */
+  transition: border-color 0.2s ease;
+}
+
+.filter-modal input:focus {
+  border-color: #1976d2;
+  outline: none;
 }
 
 .filter-actions {
   display: flex;
+  justify-content: flex-end; /* Aligns the buttons nicely to the right */
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 8px;
+}
+
+.filter-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+/* Style individual buttons for better UX hierarchy */
+.filter-actions button[type="submit"] {
+  background-color: #1976d2;
+  color: white;
+}
+
+.filter-actions button[type="submit"]:hover {
+  background-color: #1565c0;
+}
+
+.filter-actions button[type="button"]:first-of-type {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.filter-actions button[type="button"]:first-of-type:hover {
+  background-color: #d5d5d5;
+}
+
+.filter-actions button[type="button"]:last-of-type {
+  background-color: #fce4e4;
+  color: #d32f2f;
+}
+
+.filter-actions button[type="button"]:last-of-type:hover {
+  background-color: #fad4d4;
 }
